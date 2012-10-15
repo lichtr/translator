@@ -22,12 +22,32 @@ class StructureAnalysis
 
   def structure
     structured = []
-    if m = sentence.match(/,/)
-      structured << m.pre_match.strip
-      structured << m.post_match.strip
-      structured.map { |x| x.split(/\s/) }
-    else structured << sentence.split(/\s/) 
+    sc = StringScanner.new(sentence)
+    pos = []
+
+    while sc.scan_until(/,/)
+        pos << sc.pos
     end
+
+    case pos.size
+    when 0
+      structured << sentence 
+    when 1
+      structured << sentence[0...pos[0]]
+      structured << sentence[pos[0]..-1]
+    when 2
+      structured << sentence[0...pos[0]].concat(sentence[pos[1]..-1])
+      structured << sentence[pos[0]...pos[1]]
+    end
+
+    structured.map { |x| x.strip }
+    structured.map do |x|
+      if x.include?(",")
+        x.delete(",")
+      end
+    end
+
+    structured.map { |x| x.split(/\s/) }
   end
 end
 

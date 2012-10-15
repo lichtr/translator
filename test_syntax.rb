@@ -25,5 +25,10 @@ describe "structure analysis" do
       test = StructureAnalysis.new("Gaius Iuliam amat, quae puella est.")
       assert_equal [["Gaius", "Iuliam", "amat"], ["quae", "puella", "est"]], test.structure
     end
+
+    it "HS, NS, HS" do
+      test = StructureAnalysis.new("Gaius Iuliam, quae puella est, amat")
+      assert_equal [["Gaius", "Iuliam", "amat"], ["quae", "puella", "est"]], test.structure 
+    end
   end
 end
