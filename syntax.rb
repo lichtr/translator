@@ -41,7 +41,6 @@ class StructureAnalysis
       hash.each do |k,v|
 
         case
-
         when v[1] == false && v[2] == false
           structured << v[0]
 
@@ -69,6 +68,19 @@ class StructureAnalysis
     structured
   end
 end
+
+
+def print_structure
+  structured = structure
+  raw_split = sentence.split(/\s/)
+
+  def indent(level)
+    "  " * level
+  end
+
+
+end
+
 
 # DOCUMENTATION:
 # structure needs to know: Conjunctions, all verbs in a sentence, the predicate.
