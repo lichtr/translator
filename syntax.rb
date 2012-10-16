@@ -1,9 +1,8 @@
 CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod", ]
 VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur"]
 PRED = ["amat", "imperavit"]
-class StructureAnalysis
-  require 'strscan'
 
+class StructureAnalysis
   attr_reader :input, :sentence
 
   def initialize input
@@ -20,6 +19,7 @@ class StructureAnalysis
     match = input[-1].match(/[\.\?!]/)
     unless match.nil?
       match[0]
+    else ""
     end    
   end
 
@@ -67,19 +67,56 @@ class StructureAnalysis
     end
     structured
   end
-end
 
+  def print_structure
+    structured = structure
+    raw_split = {}
+    sentence.split(/\s/).each_with_index { |x,i| raw_split[i] = x }
 
-def print_structure
-  structured = structure
-  raw_split = sentence.split(/\s/)
+    def indent(level)
+      "  " * level
+    end
 
-  def indent(level)
-    "  " * level
+    structured.each_with_index do |x,i|
+      raw_split.each do |k,v|
+        if raw_split[k].match(/,/)
+          if x.include?(raw_split[k].chop)
+            raw_split[k].prepend(indent(i))
+          end
+        else
+          if x.include?(raw_split[k])
+             raw_split[k].prepend(indent(i))
+          end
+        end
+      end
+    end
+
+    str = raw_split[0]
+    raw_split.each do |k,v|
+        if raw_split[k].index(/\S/) == raw_split[k-1].index(/\S/)
+          str << " " + raw_split[k].strip
+        else str << "\n" + raw_split[k]
+        end unless raw_split[k] == raw_split[0]
+    end
+    puts str + end_of_input
+    puts
   end
 
-
 end
+
+
+test = StructureAnalysis.new("Gaius Iuliam amat, quae puella est.")
+test.print_structure
+
+test = StructureAnalysis.new("Gaius Iuliam, quae puella est, amat.")
+test.print_structure
+
+test = StructureAnalysis.new("Gaius Iuliam, filiam Claudiae, amat, quod puella pulchra est.")
+test.print_structure
+
+test = StructureAnalysis.new("Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret.")
+test.print_structure
+
 
 
 # DOCUMENTATION:

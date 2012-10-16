@@ -24,12 +24,12 @@ describe "structure analysis" do
     end
 
     it "HS, NS" do
-      test = StructureAnalysis.new("Gaius Iuliam amat, quae puella est.")
+      test = StructureAnalysis.new("Gaius Iuliam amat, quae puella est")
       test.structure.should == [["Gaius", "Iuliam", "amat"], ["quae", "puella", "est"]]
     end
 
     it "HS, NS, HS" do
-      test = StructureAnalysis.new("Gaius Iuliam, quae puella est, amat")
+      test = StructureAnalysis.new("Gaius Iuliam, quae puella est, amat.")
       test.structure.should == [["Gaius", "Iuliam", "amat"], ["quae", "puella", "est"]]
     end
 
