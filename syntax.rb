@@ -1,4 +1,4 @@
-CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod"]
+CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod", ]
 VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur"]
 PRED = ["amat", "imperavit"]
 class StructureAnalysis
@@ -31,14 +31,10 @@ class StructureAnalysis
 
     hash = Hash.new
     tbo.each_with_index { |x, i| hash[i] = [x] }
-    hash.each do |k,v|
+    hash.each do |k,v| # !!! CONJ nur am Satzanfang? cum?? ut mit Ind?
       (v[0] & VERBS).empty? ? v << false : v << true
       (v[0] & CONJUNCTIONS).empty? ? v << false : v << true
       (v[0] & PRED).empty? ? v << false : v << true
-    end
-p hash
-    def del
-      hash.delete[k]
     end
 
     unless hash.empty?
@@ -67,18 +63,16 @@ p hash
               v[0].concat(y[0])
               hash.delete(x)
             end
-          structure << v[0]
-          hash.delete(k)
           end 
+          structured << v[0]
+          hash.delete(k)
         end
       end 
     end
-    p hash
-
+    structured
   end
 end
-
-test = StructureAnalysis.new("Gaius Iuliam amat.")
+test = StructureAnalysis.new("Cui Iuno, si se pulcherrimam fuisse iudicavisset, in omnibus terris eum regnaturum pollicita est, Minerva ei praestantem gloriam promisit.")
 p test.structure
 # if word after match is included in Conjunction (take one of the check
 # methods in the library, take string till next sc.pos.
