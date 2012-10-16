@@ -36,7 +36,7 @@ class StructureAnalysis
       (v[0] & CONJUNCTIONS).empty? ? v << false : v << true
       (v[0] & PRED).empty? ? v << false : v << true
     end
-
+p hash
     def del
       hash.delete[k]
     end
@@ -51,7 +51,10 @@ class StructureAnalysis
           hash.delete(k)
 
         when v[3] == true
-          structured[0].concat(v[0])
+          if structured[0].nil?
+            structured << v[0]
+          else structured[0].concat(v[0])
+          end
           hash.delete(k)
 
         when v[1] == true && v[2] == true
@@ -68,14 +71,15 @@ class StructureAnalysis
           hash.delete(k)
           end 
         end
-      end
+      end 
     end
     p hash
-    structured
 
   end
 end
 
+test = StructureAnalysis.new("Gaius Iuliam amat.")
+p test.structure
 # if word after match is included in Conjunction (take one of the check
 # methods in the library, take string till next sc.pos.
 # start from the inside.
