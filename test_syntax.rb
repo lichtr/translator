@@ -1,7 +1,7 @@
 require './syntax.rb'
 require 'rspec/autorun'
 
-describe "structure analysis" do
+describe StructureAnalysis do
   
   describe "satzzeichen am ende" do
 
@@ -44,3 +44,18 @@ describe "structure analysis" do
     end
   end
 end
+
+describe StructurePrinter do
+  describe "string" do
+    it "returns proper string representation" do
+      a = "Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret"
+      b = "."
+      c = [["Inter", "quas", "magna", "discordia", "orta", "Iuppiter", "imperavit", "Mercurio"], ["ut", "deas", "ad", "Alexandrum", "Paridem", "deduceret"], ["qui", "in", "Ida", "monte", "gregem", "pascebatur"]]
+      test = StructurePrinter.new(a,b,c)
+      test.string should == "Inter quas magna discordia orta Iuppiter imperavit Mercurio,\n  ut deas ad Alexandrum Paridem,\n    qui in Ida monte gregem pascebatur,\n  deduceret."
+    end
+  end
+end
+
+
+

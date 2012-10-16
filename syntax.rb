@@ -17,10 +17,7 @@ class StructureAnalysis
 
   def end_of_input
     match = input[-1].match(/[\.\?!]/)
-    unless match.nil?
-      match[0]
-    else ""
-    end    
+    match.nil? ? "" : match[0]
   end
 
   def structure
@@ -68,54 +65,84 @@ class StructureAnalysis
     structured
   end
 
-  def print_structure
-    structured = structure
+  def print
+    puts StructurePrinter.new(sentence, end_of_input, structure).string
+    puts
+  end
+end
+
+class StructurePrinter
+  attr_reader :sentence, :end_of_input, :structure, :raw_split, :str
+
+  def initialize sentence, end_of_input, structure
+    @sentence = sentence
+    @end_of_input = end_of_input
+    @structure = structure
+    @raw_split = raw_split
+  end
+
+
+  def string
+    indent_raw_string_values
+    fit_raw_string_values_to_string
+    add_satzzeichen
+    str
+  end
+
+  def indent(level)
+    "  " * level
+  end
+  
+  def raw_split
     raw_split = {}
     sentence.split(/\s/).each_with_index { |x,i| raw_split[i] = x }
+    raw_split
+  end
 
-    def indent(level)
-      "  " * level
-    end
-
-    structured.each_with_index do |x,i|
+  def indent_raw_string_values   # Ruby is so crazy...
+    structure.each_with_index do |x,i|
       raw_split.each do |k,v|
         if raw_split[k].match(/,/)
           if x.include?(raw_split[k].chop)
-            raw_split[k].prepend(indent(i))
+            @raw_split[k].prepend(indent(i))
           end
         else
           if x.include?(raw_split[k])
-             raw_split[k].prepend(indent(i))
+             @raw_split[k].prepend(indent(i))
           end
         end
       end
     end
-
-    str = raw_split[0]
-    raw_split.each do |k,v|
-        if raw_split[k].index(/\S/) == raw_split[k-1].index(/\S/)
-          str << " " + raw_split[k].strip
-        else str << "\n" + raw_split[k]
-        end unless raw_split[k] == raw_split[0]
-    end
-    puts str + end_of_input
-    puts
   end
 
+  def fit_raw_string_values_to_string
+    rs = @raw_split
+    @str = rs[0]
+
+    rs.each do |k,v|
+      if rs[k].index(/\S/) == rs[k-1].index(/\S/)
+        str << " " + rs[k].strip
+      else str << "\n" + rs[k]
+      end unless rs[k] == rs[0]
+    end
+  end
+
+  def add_satzzeichen
+    str << end_of_input
+  end
 end
 
-
 test = StructureAnalysis.new("Gaius Iuliam amat, quae puella est.")
-test.print_structure
+test.print
 
 test = StructureAnalysis.new("Gaius Iuliam, quae puella est, amat.")
-test.print_structure
+test.print
 
 test = StructureAnalysis.new("Gaius Iuliam, filiam Claudiae, amat, quod puella pulchra est.")
-test.print_structure
+test.print
 
 test = StructureAnalysis.new("Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret.")
-test.print_structure
+test.print
 
 
 
