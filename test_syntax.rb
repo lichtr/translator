@@ -47,12 +47,17 @@ end
 
 describe StructurePrinter do
   describe "string" do
+    before (:each) do
+      @print = StructurePrinter.new(
+        "Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret", 
+        ".", 
+        [["Inter", "quas", "magna", "discordia", "orta", "Iuppiter", "imperavit", "Mercurio"], 
+          ["ut", "deas", "ad", "Alexandrum", "Paridem", "deduceret"], 
+          ["qui", "in", "Ida", "monte", "gregem", "pascebatur"]])
+    end
+
     it "returns proper string representation" do
-      a = "Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret"
-      b = "."
-      c = [["Inter", "quas", "magna", "discordia", "orta", "Iuppiter", "imperavit", "Mercurio"], ["ut", "deas", "ad", "Alexandrum", "Paridem", "deduceret"], ["qui", "in", "Ida", "monte", "gregem", "pascebatur"]]
-      test = StructurePrinter.new(a,b,c)
-      test.string should == "Inter quas magna discordia orta Iuppiter imperavit Mercurio,\n  ut deas ad Alexandrum Paridem,\n    qui in Ida monte gregem pascebatur,\n  deduceret."
+      @print.string.should == "Inter quas magna discordia orta Iuppiter imperavit Mercurio,\n  ut deas ad Alexandrum Paridem,\n    qui in Ida monte gregem pascebatur,\n  deduceret."
     end
   end
 end

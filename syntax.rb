@@ -132,19 +132,22 @@ class StructurePrinter
   end
 end
 
-test = StructureAnalysis.new("Gaius Iuliam amat, quae puella est.")
-test.print
 
-test = StructureAnalysis.new("Gaius Iuliam, quae puella est, amat.")
-test.print
+if __FILE__ == $PROGRAM_NAME
 
-test = StructureAnalysis.new("Gaius Iuliam, filiam Claudiae, amat, quod puella pulchra est.")
-test.print
+  test = StructureAnalysis.new("Gaius Iuliam amat, quae puella est.")
+  test.print
 
-test = StructureAnalysis.new("Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret.")
-test.print
+  test = StructureAnalysis.new("Gaius Iuliam, quae puella est, amat.")
+  test.print
 
+  test = StructureAnalysis.new("Gaius Iuliam, filiam Claudiae, amat, quod puella pulchra est.")
+  test.print
 
+  test = StructureAnalysis.new("Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret.")
+  test.print
+
+end
 
 # DOCUMENTATION:
 # structure needs to know: Conjunctions, all verbs in a sentence, the predicate.
