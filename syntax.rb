@@ -1,3 +1,6 @@
+CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod"]
+VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur"]
+PRED = ["amat", "imperavit"]
 class StructureAnalysis
   require 'strscan'
 
@@ -22,33 +25,57 @@ class StructureAnalysis
 
   def structure
     structured = []
-    sc = StringScanner.new(sentence)
-    pos = []
+    tbo = sentence.split(/,/)
+    tbo.each { |x| x.strip! }
+    tbo = tbo.map { |x| x.split(/\s/) }
 
-    while sc.scan_until(/,/)
-        pos << sc.pos
+    hash = Hash.new
+    tbo.each_with_index { |x, i| hash[i] = [x] }
+    hash.each do |k,v|
+      (v[0] & VERBS).empty? ? v << false : v << true
+      (v[0] & CONJUNCTIONS).empty? ? v << false : v << true
+      (v[0] & PRED).empty? ? v << false : v << true
     end
 
-    case pos.size
-    when 0
-      structured << sentence 
-    when 1
-      structured << sentence[0...pos[0]]
-      structured << sentence[pos[0]..-1]
-    when 2
-      structured << sentence[0...pos[0]].concat(sentence[pos[1]..-1])
-      structured << sentence[pos[0]...pos[1]]
+    def del
+      hash.delete[k]
     end
 
-    structured.map { |x| x.strip }
-    structured.map do |x|
-      if x.include?(",")
-        x.delete(",")
+    unless hash.empty?
+      hash.each do |k,v|
+
+        case
+
+        when v[1] == false && v[2] == false
+          structured << v[0]
+          hash.delete(k)
+
+        when v[3] == true
+          structured[0].concat(v[0])
+          hash.delete(k)
+
+        when v[1] == true && v[2] == true
+          structured << v[0]
+          hash.delete(k)
+
+        when v[1] == false && v[2] == true && v[3] == false
+          hash.each do |x,y|
+            if y[1] == true && y[2] == false && y[3] == false
+              v[0].concat(y[0])
+              hash.delete(x)
+            end
+          structure << v[0]
+          hash.delete(k)
+          end 
+        end
       end
     end
+    p hash
+    structured
 
-    structured.map { |x| x.split(/\s/) }
   end
 end
 
-
+# if word after match is included in Conjunction (take one of the check
+# methods in the library, take string till next sc.pos.
+# start from the inside.
