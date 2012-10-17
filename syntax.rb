@@ -1,7 +1,7 @@
-CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod", "quamdiu", "quam" ]
-VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur", "procreavit", "transportavit", "esset", "consecraverat", "erat"]
-PRED = ["amat", "imperavit", "procreavit", "transportavit", "erat"]
-
+CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quorum", "quod", "quamdiu", "quam", "quamquam",  ]
+VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur", "procreavit", "transportavit", "esset", "consecraverat", "erat", "oportet", "potest", "coniunxi", "feci", "censeo", "sis"]
+PRED = ["amat", "imperavit", "procreavit", "transportavit", "erat", "censeo"]
+# CAP-SENSITIVITY!!!
 
 class Words
 
@@ -31,8 +31,7 @@ class StructureAnalysis
     clauses = []
     tbo = sentence.split(/,/)     # performance question
     tbo.each { |x| x.strip! }
-    tbo = tbo.map { |x| x.split(/\s/) }
-
+    tbo.map! { |x| x.split(/\s/) }
     hash = Hash.new
     tbo.each_with_index { |x, i| hash[i] = x }
 
@@ -153,16 +152,17 @@ if __FILE__ == $PROGRAM_NAME
 
   test = StructureAnalysis.new("Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret.")
   test.print
-  p test.structure
-  puts
 
   test = StructureAnalysis.new("hanc Iuppiter ex ea procreavit Minoem, Sarpedonem, Rhadamanthum.")
   test.print
 
   test = StructureAnalysis.new("Aeetae, Solis filio, erat responsum tam diu eum regnum habiturum, quamdiu ea pellis, quam Phrixus consecraverat, in fano Martis esset.")
   test.print
-  p test.structure
 end
+
+ test = StructureAnalysis.new("quamquam te, Marce fili, annum iam audientem Cratippum idque Athenis abundare oportet praeceptis institutisque philosophiae propter summam et doctoris auctoritatem et urbis, quorum alter te scientia augere potest, altera exemplis, tamen, ut ipse ad meam utilitatem semper cum Graecis Latina coniunxi neque id in philosophia solum, sed etiam in dicendi exercitatione feci, idem tibi censeo faciendum, ut par sis in utriusque orationis facultate.")
+ test.print
+  p test.structure
 
 # DOCUMENTATION:
 # structure needs to know: Conjunctions, all verbs in a sentence, the predicate.

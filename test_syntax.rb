@@ -60,6 +60,10 @@ describe StructureAnalysis do
     end
   end
 end
+ #   it "" do
+      #@i = "Quamquam te, Marce fili, annum iam audientem Cratippum idque Athenis abundare oportet praeceptis institutisque philosophiae propter summam et doctoris auctoritatem et urbis, quorum alter te scientia augere potest, altera exemplis, tamen, ut ipse ad meam utilitatem semper cum Graecis Latina coniunxi neque id in philosophia solum, sed etiam in dicendi exercitatione feci, idem tibi censeo faciendum, ut par sis in utriusque orationis facultate."
+      #test.should == [[
+    #end
 
 describe StructurePrinter do
   describe "string" do
@@ -80,3 +84,14 @@ end
 
 
 
+
+# quamquam te, 
+# Marce fili, 
+# annum iam audientem Cratippum idque Athenis abundare oportet praeceptis institutisque philosophiae propter summam et doctoris auctoritatem et urbis, 
+# quorum alter te scientia augere potest, 
+# altera exemplis, 
+# tamen, 
+# ut ipse ad meam utilitatem semper cum Graecis Latina coniunxi neque id in philosophia solum, 
+# sed etiam in dicendi exercitatione feci, 
+# idem tibi censeo faciendum, 
+# ut par sis in utriusque orationis facultate. 
