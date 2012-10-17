@@ -12,7 +12,7 @@ class Syntax
 end
 
 class StructureAnalysis
-  attr_reader :input, :sentence
+  attr_reader :input, :sentence, :has_verb, :has_conj, :has_pred
 
   def initialize input
     @input = input
@@ -37,28 +37,22 @@ class StructureAnalysis
 
     hash = Hash.new
     tbo.each_with_index { |x, i| hash[i] = [x] }
-    hash.each do |k,v| 
-      (v[0] & VERBS).empty? ? v << false : v << true
-      (v[0] & CONJUNCTIONS).empty? ? v << false : v << true
-      (v[0] & PRED).empty? ? v << false : v << true
-    end
 
     unless hash.empty?
       hash.each do |k,v|
-
+        satzart(v) 
         case
-        when v[1] == false && v[2] == false
+        when !has_verb && !has_conj
           structured.empty? ? structured << v[0] : structured[0].concat(v[0])
 # appositionen und aufzählen sind bitches 
-        when v[3] == true
+        when has_pred
           structured.empty? ? structured << v[0] : structured[0].concat(v[0])
-
-        when v[1] == true && v[2] == true
+        when has_verb && has_conj
           structured << v[0]
-
-        when v[1] == false && v[2] == true && v[3] == false
+        when !has_verb && has_conj # && !has_pred don't know why that was important...
           hash.each do |x,y|
-            if y[1] == true && y[2] == false && y[3] == false
+            satzart(y)
+            if has_verb && !has_conj # && !has_pred we'll see...
               v[0].concat(y[0])
               hash.delete(x)
             end
@@ -69,6 +63,12 @@ class StructureAnalysis
       end 
     end
     structured
+  end
+
+  def satzart(satzteil)
+    @has_verb = !(satzteil[0] & VERBS).empty?
+    @has_conj = !(satzteil[0] & CONJUNCTIONS).empty?
+    @has_pred = !(satzteil[0] & PRED).empty? 
   end
 
   def print
@@ -106,7 +106,7 @@ class StructurePrinter
   end
 
   def indent_raw_string_values   # Ruby is so crazy...
-    structure.each_with_index do |x,i|
+    structure.each_with_index do |x,i|   
       raw_split.each do |k,v|
         if raw_split[k].match(/,/)
           @raw_split[k].prepend(indent(i)) if x.include?(raw_split[k].chop)
