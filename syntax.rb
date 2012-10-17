@@ -12,12 +12,10 @@ class Syntax
 end
 
 class StructureAnalysis
-  attr_reader :input, :sentence, :has_verb, :has_conj, :has_pred
+  attr_reader :input, :has_verb, :has_conj, :has_pred
 
   def initialize input
     @input = input
-    @sentence = sentence
-    @end_of_input = end_of_input
   end
 
   def sentence
@@ -31,7 +29,7 @@ class StructureAnalysis
 
   def structure
     structured = []
-    tbo = sentence.split(/,/)
+    tbo = sentence.split(/,/)     # performance question
     tbo.each { |x| x.strip! }
     tbo = tbo.map { |x| x.split(/\s/) }
 
@@ -43,8 +41,7 @@ class StructureAnalysis
         satzart(v) 
         case
         when !has_verb && !has_conj
-          structured.empty? ? structured << v[0] : structured[0].concat(v[0])
-# appositionen und aufzählen sind bitches 
+          structured.empty? ? structured << v[0] : structured[0].concat(v[0]) # appositionen und aufzählen sind bitches 
         when has_pred
           structured.empty? ? structured << v[0] : structured[0].concat(v[0])
         when has_verb && has_conj
@@ -84,11 +81,11 @@ class StructurePrinter
     @sentence = sentence
     @end_of_input = end_of_input
     @structure = structure
-    @raw_split = raw_split
+    @raw_split = split_sentence_to_hash 
   end
 
 
-  def string
+  def string  # only "public" method here...
     indent_raw_string_values
     fit_raw_string_values_to_string
     add_satzzeichen
@@ -99,26 +96,26 @@ class StructurePrinter
     "  " * level
   end
   
-  def raw_split
-    raw_split = {}
-    sentence.split(/\s/).each_with_index { |x,i| raw_split[i] = x }
-    raw_split
+  def split_sentence_to_hash
+    rs = {}
+    sentence.split(/\s/).each_with_index { |x,i| rs[i] = x }
+    rs
   end
 
-  def indent_raw_string_values   # Ruby is so crazy...
+  def indent_raw_string_values 
     structure.each_with_index do |x,i|   
       raw_split.each do |k,v|
         if raw_split[k].match(/,/)
-          @raw_split[k].prepend(indent(i)) if x.include?(raw_split[k].chop)
+          raw_split[k].prepend(indent(i)) if x.include?(raw_split[k].chop)
         else
-          @raw_split[k].prepend(indent(i)) if x.include?(raw_split[k])
+          raw_split[k].prepend(indent(i)) if x.include?(raw_split[k])
         end
       end
     end
   end
 
   def fit_raw_string_values_to_string
-    rs = @raw_split
+    rs = raw_split
     @str = rs[0]
 
     rs.each do |k,v|
