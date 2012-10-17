@@ -1,6 +1,15 @@
-CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod", ]
-VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur"]
-PRED = ["amat", "imperavit"]
+CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod", "quamdiu", "quam" ]
+VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur", "procreavit", "transportavit", "esset", "consecraverat"]
+PRED = ["amat", "imperavit", "procreavit", "transportavit", "erat"]
+
+
+class Words
+
+end
+
+class Syntax
+
+end
 
 class StructureAnalysis
   attr_reader :input, :sentence
@@ -39,13 +48,10 @@ class StructureAnalysis
 
         case
         when v[1] == false && v[2] == false
-          structured << v[0]
-
+          structured.empty? ? structured << v[0] : structured[0].concat(v[0])
+# appositionen und aufzählen sind bitches 
         when v[3] == true
-          if structured[0].nil?
-            structured << v[0]
-          else structured[0].concat(v[0])
-          end
+          structured.empty? ? structured << v[0] : structured[0].concat(v[0])
 
         when v[1] == true && v[2] == true
           structured << v[0]
@@ -103,13 +109,9 @@ class StructurePrinter
     structure.each_with_index do |x,i|
       raw_split.each do |k,v|
         if raw_split[k].match(/,/)
-          if x.include?(raw_split[k].chop)
-            @raw_split[k].prepend(indent(i))
-          end
+          @raw_split[k].prepend(indent(i)) if x.include?(raw_split[k].chop)
         else
-          if x.include?(raw_split[k])
-             @raw_split[k].prepend(indent(i))
-          end
+          @raw_split[k].prepend(indent(i)) if x.include?(raw_split[k])
         end
       end
     end
@@ -146,7 +148,15 @@ if __FILE__ == $PROGRAM_NAME
 
   test = StructureAnalysis.new("Inter quas magna discordia orta Iuppiter imperavit Mercurio, ut deas ad Alexandrum Paridem, qui in Ida monte gregem pascebatur, deduceret.")
   test.print
+  p test.structure
+  puts
 
+  test = StructureAnalysis.new("hanc Iuppiter, quae est, in taurum conversus a Sidone Cretam transportavit et ex ea procreavit Minoem, Sarpedonem, Rhadamanthum.")
+  test.print
+
+  test = StructureAnalysis.new("Aeetae, Solis filio, erat responsum tam diu eum regnum habiturum, quamdiu ea pellis, quam Phrixus consecraverat, in fano Martis esset.")
+  test.print
+  p test.structure
 end
 
 # DOCUMENTATION:
