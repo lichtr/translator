@@ -39,7 +39,7 @@ describe StructureAnalysis do
       test.should == [["Gaius", "Iuliam", "amat"], ["quae", "puella", "est"]]
     end
 
-    it "HS, NS, HS, NS" do
+    it "HS, App, HS, NS" do
       @i = "Gaius Iuliam, filiam Claudiae, amat, quod puella pulchra est."
       test.should == [["Gaius", "Iuliam", "amat"], ["filiam", "Claudiae"], ["quod", "puella", "pulchra", "est"]]
     end
@@ -51,6 +51,12 @@ describe StructureAnalysis do
 
     it "HS, App, HS, NS1, NS2, NS1" do
       @i = "Aeetae, Solis filio, erat responsum tam diu eum regnum habiturum, quamdiu ea pellis, quam Phrixus consecraverat, in fano Martis esset."
+      test.should == [["Aeetae", "erat", "responsum", "tam", "diu", "eum", "regnum", "habiturum"], ["Solis", "filio"],["quamdiu", "ea", "pellis", "in", "fano", "Martis", "esset"], ["quam", "Phrixus", "consecraverat"]]
+    end
+
+    it "HS, Enum, Enum" do
+      @i = "hanc Iuppiter ex ea procreavit Minoem, Sarpedonem, Rhadamanthum."
+      test.should == [["hanc", "Iuppiter", "ex", "ea", "procreavit", "Minoem", "Sarpedonem", "Rhadamanthum"]]
     end
   end
 end

@@ -1,5 +1,5 @@
 CONJUNCTIONS = ["ut", "cum", "qui", "quae", "quod", "quamdiu", "quam" ]
-VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur", "procreavit", "transportavit", "esset", "consecraverat"]
+VERBS = ["amat", "est", "deduceret", "imperavit", "pascebatur", "procreavit", "transportavit", "esset", "consecraverat", "erat"]
 PRED = ["amat", "imperavit", "procreavit", "transportavit", "erat"]
 
 
@@ -28,44 +28,52 @@ class StructureAnalysis
   end
 
   def structure
-    structured = []
+    clauses = []
     tbo = sentence.split(/,/)     # performance question
     tbo.each { |x| x.strip! }
     tbo = tbo.map { |x| x.split(/\s/) }
 
     hash = Hash.new
-    tbo.each_with_index { |x, i| hash[i] = [x] }
+    tbo.each_with_index { |x, i| hash[i] = x }
 
     unless hash.empty?
-      hash.each do |k,v|
+      hash.each do |k,v| # please rename those vars to something sensible...
         satzart(v) 
-        case
+        case  # not a good solution. impossible to solve without OO...
         when !has_verb && !has_conj
-          structured.empty? ? structured << v[0] : structured[0].concat(v[0]) # appositionen und aufzählen sind bitches 
+          enum(hash,k) ? clauses[-1] += v : clauses << v   
         when has_pred
-          structured.empty? ? structured << v[0] : structured[0].concat(v[0])
+          clauses.empty? ? clauses << v : clauses[0] += v
         when has_verb && has_conj
-          structured << v[0]
+          clauses << v
         when !has_verb && has_conj # && !has_pred don't know why that was important...
           hash.each do |x,y|
             satzart(y)
             if has_verb && !has_conj # && !has_pred we'll see...
-              v[0].concat(y[0])
-              hash.delete(x)
+              v.concat(y) and hash.delete(x)
             end
           end 
-          structured << v[0]
+          clauses << v
         end
         hash.delete(k)
       end 
     end
-    structured
+    clauses
   end
 
   def satzart(satzteil)
-    @has_verb = !(satzteil[0] & VERBS).empty?
-    @has_conj = !(satzteil[0] & CONJUNCTIONS).empty?
-    @has_pred = !(satzteil[0] & PRED).empty? 
+    @has_verb = !(satzteil & VERBS).empty?
+    @has_conj = !(satzteil & CONJUNCTIONS).empty?
+    @has_pred = !(satzteil & PRED).empty? 
+  end
+
+  def enum(hash, k)
+    words_before_or_after = case 
+                            when hash[k+1]
+                              hash[k+1].size
+                            else 1
+    end # and the same word class (Verb, Noun...) this sucks. enum of multiple words will fail
+    words_before_or_after == 1 && hash[k].size == 1
   end
 
   def print
@@ -148,7 +156,7 @@ if __FILE__ == $PROGRAM_NAME
   p test.structure
   puts
 
-  test = StructureAnalysis.new("hanc Iuppiter, quae est, in taurum conversus a Sidone Cretam transportavit et ex ea procreavit Minoem, Sarpedonem, Rhadamanthum.")
+  test = StructureAnalysis.new("hanc Iuppiter ex ea procreavit Minoem, Sarpedonem, Rhadamanthum.")
   test.print
 
   test = StructureAnalysis.new("Aeetae, Solis filio, erat responsum tam diu eum regnum habiturum, quamdiu ea pellis, quam Phrixus consecraverat, in fano Martis esset.")
