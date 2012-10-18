@@ -8,6 +8,7 @@ class SentenceSplitByCommaAnalysis
     @content = content
     @has_subjunction = has_subjunction
     @has_verb = has_verb
+    @state = state
   end
 
   def has_subjunction
@@ -16,6 +17,13 @@ class SentenceSplitByCommaAnalysis
 
   def has_verb
     VERBS.any? { |x| content.include?(x) }
+  end
+  
+  def state 
+    return 1 if  has_subjunction &&  has_verb
+    return 2 if  has_subjunction && !has_verb
+    return 3 if !has_subjunction &&  has_verb
+    return 4 if !has_subjunction && !has_verb
   end
 end
 
@@ -29,7 +37,7 @@ class StructureAnalysis
   end
 
   def end_of_input
-    input.slice!(-1) if input.match(/[$\.\?!]/)
+    input.slice!(-1) if input.match(/[$\.\?!;]/)
   end  
 
   def sentence_split_by_comma
@@ -50,13 +58,6 @@ class SentenceSplitByCommaSorter
   end
 
   def sort
-    # Every clause has 2² possible states:
-    #    has_subjunction &  has_verb is s1
-    #    has_subjunction & !has_verb is s2
-    #   !has_subjunction &  has_verb is s3
-    #   !has_subjunction & !has_verb is s4
-    #
-
     indexed_ssby = {}
     sentence_split_by_comma.each_with_index { |x, i| indexed_ssby[i] = x }
 
